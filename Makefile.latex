@@ -1,0 +1,29 @@
+# Makefile for the paper using latex
+
+MAIN := $(patsubst %.tex,%.pdf,$(wildcard *.tex))
+
+%.pdf : %.tex
+	latex $<
+	bibtex $(<:%.tex=%)
+	latex $<
+	latex $<
+	dvips -Ppdf -G0 -o $(<:%.tex=%.ps) $(<:%.tex=%)
+	ps2pdf $(<:%.tex=%.ps)
+
+all: $(MAIN)
+	rm -f *.aux *.log *.dvi
+
+clean:
+	rm -f *.aux *.log *.dvi *.blg *.bbl
+
+realclean:
+	rm -f *.aux *.log *.dvi *.blg *.bbl *.ps *.pdf
+
+# If you want your files automatically updated whenever an included figure
+# changes, then you have to manually add the dependencies here.  At some
+# future point I will figure out how to do this automatically.
+
+paper.pdf: apache-thread-mpm.png tcp.png
+
+.PHONY: all
+
